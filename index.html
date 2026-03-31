@@ -69,12 +69,56 @@
     }
     .nav-cta:hover { opacity: 0.85; }
 
+    /* ── VEHICLES ── */
+    .road {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 64px;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .road-line {
+      position: absolute;
+      bottom: 28px;
+      left: 0; right: 0;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 40px, transparent 40px, transparent 80px);
+    }
+    .vehicle {
+      position: absolute;
+      bottom: 8px;
+      white-space: nowrap;
+      animation: drive linear infinite;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    }
+    .vehicle svg { display: block; }
+
+    @keyframes drive {
+      from { transform: translateX(-120%); }
+      to   { transform: translateX(110vw); }
+    }
+
+    /* truck (фура) */
+    .v-truck  { font-size: 52px; bottom: 6px; animation-duration: 18s; }
+    /* container truck (контейнеровоз) */
+    .v-container { font-size: 60px; bottom: 4px; animation-duration: 22s; }
+    /* gazelle (газель) */
+    .v-gazelle { font-size: 36px; bottom: 10px; animation-duration: 12s; }
+
+    .v1  { animation-delay: 0s; }
+    .v2  { animation-delay: 6s; }
+    .v3  { animation-delay: 11s; }
+    .v4  { animation-delay: 3s; }
+    .v5  { animation-delay: 16s; }
+    .v6  { animation-delay: 20s; }
+
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 120px 48px 80px;
+      padding: 120px 48px 100px;
       position: relative;
       overflow: hidden;
     }
@@ -475,6 +519,139 @@
         <img src="photo.png" alt="Жилина Елена" />
       </div>
     </div>
+  </div>
+
+  <!-- Дорога с машинами -->
+  <div class="road">
+    <div class="road-line"></div>
+
+    <!-- Фуры -->
+    <div class="vehicle v-truck v1">
+      <svg width="120" height="48" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- кузов -->
+        <rect x="0" y="8" width="80" height="30" rx="3" fill="#2d3a5c"/>
+        <rect x="2" y="10" width="76" height="26" rx="2" fill="#1e2a45"/>
+        <!-- полосы на кузове -->
+        <rect x="4" y="14" width="72" height="3" rx="1" fill="#6c63ff" opacity="0.5"/>
+        <rect x="4" y="25" width="72" height="2" rx="1" fill="#00d4aa" opacity="0.4"/>
+        <!-- кабина -->
+        <rect x="80" y="14" width="36" height="24" rx="4" fill="#3a4a70"/>
+        <!-- стекло кабины -->
+        <rect x="84" y="17" width="20" height="14" rx="2" fill="#5a8fc0" opacity="0.7"/>
+        <!-- фары -->
+        <circle cx="116" cy="33" r="3" fill="#ffe066"/>
+        <circle cx="116" cy="33" r="2" fill="#fff"/>
+        <!-- колёса -->
+        <circle cx="20" cy="40" r="7" fill="#222"/>
+        <circle cx="20" cy="40" r="4" fill="#444"/>
+        <circle cx="20" cy="40" r="2" fill="#666"/>
+        <circle cx="55" cy="40" r="7" fill="#222"/>
+        <circle cx="55" cy="40" r="4" fill="#444"/>
+        <circle cx="55" cy="40" r="2" fill="#666"/>
+        <circle cx="100" cy="40" r="7" fill="#222"/>
+        <circle cx="100" cy="40" r="4" fill="#444"/>
+        <circle cx="100" cy="40" r="2" fill="#666"/>
+      </svg>
+    </div>
+
+    <div class="vehicle v-truck v2" style="animation-delay:8s; animation-duration:20s;">
+      <svg width="120" height="48" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="8" width="80" height="30" rx="3" fill="#1e3a2a"/>
+        <rect x="2" y="10" width="76" height="26" rx="2" fill="#162b1e"/>
+        <rect x="4" y="14" width="72" height="3" rx="1" fill="#00d4aa" opacity="0.5"/>
+        <rect x="4" y="25" width="72" height="2" rx="1" fill="#6c63ff" opacity="0.4"/>
+        <rect x="80" y="14" width="36" height="24" rx="4" fill="#2a4a3a"/>
+        <rect x="84" y="17" width="20" height="14" rx="2" fill="#5ac0a0" opacity="0.7"/>
+        <circle cx="116" cy="33" r="3" fill="#ffe066"/>
+        <circle cx="116" cy="33" r="2" fill="#fff"/>
+        <circle cx="20" cy="40" r="7" fill="#222"/><circle cx="20" cy="40" r="4" fill="#444"/><circle cx="20" cy="40" r="2" fill="#666"/>
+        <circle cx="55" cy="40" r="7" fill="#222"/><circle cx="55" cy="40" r="4" fill="#444"/><circle cx="55" cy="40" r="2" fill="#666"/>
+        <circle cx="100" cy="40" r="7" fill="#222"/><circle cx="100" cy="40" r="4" fill="#444"/><circle cx="100" cy="40" r="2" fill="#666"/>
+      </svg>
+    </div>
+
+    <!-- Контейнеровоз -->
+    <div class="vehicle v-container v3">
+      <svg width="160" height="52" viewBox="0 0 160 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- прицеп -->
+        <rect x="0" y="6" width="60" height="34" rx="2" fill="#1a2540"/>
+        <rect x="60" y="6" width="60" height="34" rx="2" fill="#1e2d4a"/>
+        <!-- рёбра контейнера -->
+        <line x1="60" y1="6" x2="60" y2="40" stroke="#2a3a5a" stroke-width="2"/>
+        <line x1="30" y1="6" x2="30" y2="40" stroke="#2a3a5a" stroke-width="1.5"/>
+        <line x1="90" y1="6" x2="90" y2="40" stroke="#2a3a5a" stroke-width="1.5"/>
+        <line x1="0" y1="23" x2="120" y2="23" stroke="#2a3a5a" stroke-width="1.5"/>
+        <!-- надпись логотип на контейнере -->
+        <rect x="8" y="10" width="44" height="10" rx="2" fill="#6c63ff" opacity="0.3"/>
+        <rect x="68" y="10" width="44" height="10" rx="2" fill="#00d4aa" opacity="0.3"/>
+        <!-- тягач -->
+        <rect x="120" y="14" width="36" height="26" rx="4" fill="#2e3d60"/>
+        <rect x="124" y="17" width="20" height="14" rx="2" fill="#4a7ab0" opacity="0.8"/>
+        <circle cx="156" cy="37" r="3" fill="#ffe066"/>
+        <circle cx="156" cy="37" r="2" fill="#fff"/>
+        <!-- дышло -->
+        <rect x="116" y="36" width="8" height="4" fill="#333"/>
+        <!-- колёса -->
+        <circle cx="18" cy="44" r="7" fill="#222"/><circle cx="18" cy="44" r="4" fill="#444"/><circle cx="18" cy="44" r="2" fill="#666"/>
+        <circle cx="70" cy="44" r="7" fill="#222"/><circle cx="70" cy="44" r="4" fill="#444"/><circle cx="70" cy="44" r="2" fill="#666"/>
+        <circle cx="95" cy="44" r="7" fill="#222"/><circle cx="95" cy="44" r="4" fill="#444"/><circle cx="95" cy="44" r="2" fill="#666"/>
+        <circle cx="137" cy="44" r="7" fill="#222"/><circle cx="137" cy="44" r="4" fill="#444"/><circle cx="137" cy="44" r="2" fill="#666"/>
+      </svg>
+    </div>
+
+    <div class="vehicle v-container v6" style="animation-delay:25s; animation-duration:24s;">
+      <svg width="160" height="52" viewBox="0 0 160 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="6" width="60" height="34" rx="2" fill="#2a1a10"/>
+        <rect x="60" y="6" width="60" height="34" rx="2" fill="#352010"/>
+        <line x1="60" y1="6" x2="60" y2="40" stroke="#4a3020" stroke-width="2"/>
+        <line x1="30" y1="6" x2="30" y2="40" stroke="#4a3020" stroke-width="1.5"/>
+        <line x1="90" y1="6" x2="90" y2="40" stroke="#4a3020" stroke-width="1.5"/>
+        <line x1="0" y1="23" x2="120" y2="23" stroke="#4a3020" stroke-width="1.5"/>
+        <rect x="8" y="10" width="44" height="10" rx="2" fill="#ff8c42" opacity="0.3"/>
+        <rect x="68" y="10" width="44" height="10" rx="2" fill="#6c63ff" opacity="0.3"/>
+        <rect x="120" y="14" width="36" height="26" rx="4" fill="#3d2e1a"/>
+        <rect x="124" y="17" width="20" height="14" rx="2" fill="#a07040" opacity="0.8"/>
+        <circle cx="156" cy="37" r="3" fill="#ffe066"/><circle cx="156" cy="37" r="2" fill="#fff"/>
+        <rect x="116" y="36" width="8" height="4" fill="#333"/>
+        <circle cx="18" cy="44" r="7" fill="#222"/><circle cx="18" cy="44" r="4" fill="#444"/><circle cx="18" cy="44" r="2" fill="#666"/>
+        <circle cx="70" cy="44" r="7" fill="#222"/><circle cx="70" cy="44" r="4" fill="#444"/><circle cx="70" cy="44" r="2" fill="#666"/>
+        <circle cx="95" cy="44" r="7" fill="#222"/><circle cx="95" cy="44" r="4" fill="#444"/><circle cx="95" cy="44" r="2" fill="#666"/>
+        <circle cx="137" cy="44" r="7" fill="#222"/><circle cx="137" cy="44" r="4" fill="#444"/><circle cx="137" cy="44" r="2" fill="#666"/>
+      </svg>
+    </div>
+
+    <!-- Газели -->
+    <div class="vehicle v-gazelle v4">
+      <svg width="80" height="44" viewBox="0 0 80 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- кузов -->
+        <rect x="0" y="12" width="46" height="22" rx="2" fill="#1e3050"/>
+        <!-- кабина -->
+        <path d="M46 12 L46 34 L72 34 L72 20 Q72 12 64 12 Z" fill="#2a4070"/>
+        <!-- стекло -->
+        <path d="M50 14 L50 22 L68 22 L68 20 Q68 14 62 14 Z" fill="#4a8abf" opacity="0.8"/>
+        <!-- фара -->
+        <circle cx="73" cy="30" r="3" fill="#ffe066"/>
+        <circle cx="73" cy="30" r="2" fill="#fff"/>
+        <!-- колёса -->
+        <circle cx="18" cy="37" r="6" fill="#222"/><circle cx="18" cy="37" r="3.5" fill="#444"/><circle cx="18" cy="37" r="1.5" fill="#666"/>
+        <circle cx="58" cy="37" r="6" fill="#222"/><circle cx="58" cy="37" r="3.5" fill="#444"/><circle cx="58" cy="37" r="1.5" fill="#666"/>
+        <!-- полоса -->
+        <rect x="2" y="17" width="42" height="2" rx="1" fill="#00d4aa" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="vehicle v-gazelle v5" style="animation-delay:14s; animation-duration:14s;">
+      <svg width="80" height="44" viewBox="0 0 80 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="12" width="46" height="22" rx="2" fill="#302010"/>
+        <path d="M46 12 L46 34 L72 34 L72 20 Q72 12 64 12 Z" fill="#403015"/>
+        <path d="M50 14 L50 22 L68 22 L68 20 Q68 14 62 14 Z" fill="#8a6a30" opacity="0.8"/>
+        <circle cx="73" cy="30" r="3" fill="#ffe066"/><circle cx="73" cy="30" r="2" fill="#fff"/>
+        <circle cx="18" cy="37" r="6" fill="#222"/><circle cx="18" cy="37" r="3.5" fill="#444"/><circle cx="18" cy="37" r="1.5" fill="#666"/>
+        <circle cx="58" cy="37" r="6" fill="#222"/><circle cx="58" cy="37" r="3.5" fill="#444"/><circle cx="58" cy="37" r="1.5" fill="#666"/>
+        <rect x="2" y="17" width="42" height="2" rx="1" fill="#ff8c42" opacity="0.5"/>
+      </svg>
+    </div>
+
   </div>
 </section>
 

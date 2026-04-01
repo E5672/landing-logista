@@ -469,14 +469,96 @@
     .success-msg {
       display: none;
       text-align: center;
-      padding: 24px;
+      padding: 24px 16px;
     }
     .success-msg .check {
       font-size: 3rem;
       margin-bottom: 12px;
     }
-    .success-msg h3 { font-size: 1.4rem; margin-bottom: 8px; }
-    .success-msg p { color: var(--muted); }
+    .success-msg h3 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+    .success-accent {
+      background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(0,212,170,0.1));
+      border: 1px solid rgba(0,212,170,0.35);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .success-accent p {
+      font-size: 0.97rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .success-accent .skip-note {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-style: italic;
+      opacity: 0.85;
+    }
+    .success-btns {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .btn-leave-landing {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 11px 28px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-leave-landing:hover { color: #ff6b6b; border-color: #ff6b6b; }
+
+    /* ── MODAL (landing) ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .modal-box .modal-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .modal-box h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 10px; }
+    .modal-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px; }
+    .modal-btns { display: flex; flex-direction: column; gap: 10px; }
+    .btn-modal-stay {
+      background: linear-gradient(135deg, var(--accent), #8b7fff);
+      color: #fff; border: none; border-radius: 50px;
+      padding: 13px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+      transition: transform 0.2s;
+    }
+    .btn-modal-stay:hover { transform: translateY(-2px); }
+    .btn-modal-leave {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 50px;
+      padding: 11px; font-size: 0.85rem; cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-modal-leave:hover { color: #ff6b6b; border-color: #ff6b6b; }
 
     /* ── RESPONSIVE ── */
 
@@ -836,12 +918,31 @@
       <div class="success-msg" id="successMsg">
         <div class="check">📋</div>
         <h3>Заявка принята!</h3>
-        <p style="margin-bottom:20px">Заполните анкету — и ваш заказ начнёт обрабатываться сразу, что ускорит решение вашей задачи. После этого наш специалист свяжется с вами.<br><br><em style="font-size:0.85rem;opacity:0.7">Пропустить этот шаг можно, но не рекомендуется.</em></p>
-        <a href="/anketa/" class="btn-primary" style="display:inline-block;text-decoration:none">Действуй! →</a>
+        <div class="success-accent">
+          <p>⚡ Заполните анкету — и ваш заказ начнёт обрабатываться <strong>сразу</strong>, что ускорит решение вашей задачи. После этого наш специалист свяжется с вами.</p>
+          <div class="skip-note">Пропустить этот шаг можно, но не рекомендуется.</div>
+        </div>
+        <div class="success-btns">
+          <a href="/anketa/" class="btn-primary" style="display:inline-block;text-decoration:none;width:100%;text-align:center">Действуй! →</a>
+          <button class="btn-leave-landing" id="leaveLandingBtn">Уйти без анкеты</button>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- SKIP MODAL -->
+<div class="modal-overlay" id="landingSkipModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚡</div>
+    <h3>Хочешь ускорить процесс?</h3>
+    <p>Заполни анкету — и дело пойдёт в работу мгновенно.</p>
+    <div class="modal-btns">
+      <button class="btn-modal-stay" id="modalStayBtn">Заполнить анкету</button>
+      <button class="btn-modal-leave" id="modalLeaveBtn">Уйти без анкеты</button>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -876,6 +977,37 @@
     form.style.display = 'none';
     success.style.display = 'block';
   }
+
+  // Skip modal on landing
+  document.getElementById('leaveLandingBtn').addEventListener('click', () => {
+    document.getElementById('landingSkipModal').classList.add('active');
+  });
+  document.getElementById('modalStayBtn').addEventListener('click', () => {
+    document.getElementById('landingSkipModal').classList.remove('active');
+  });
+  document.getElementById('modalLeaveBtn').addEventListener('click', async () => {
+    const clientData = JSON.parse(sessionStorage.getItem('clientData') || '{}');
+    if (clientData.name || clientData.phone) {
+      const text = `🚛 *Новая заявка с сайта*\n\n` +
+        `👤 Имя: ${clientData.name || '—'}\n` +
+        `📞 Контакт: ${clientData.phone || '—'}\n` +
+        `📋 Тема: ${clientData.topic || '—'}\n` +
+        `💬 Комментарий: ${clientData.comment || '—'}\n\n` +
+        `⚠️ *Клиент ушёл без заполнения анкеты*`;
+      try {
+        await fetch('https://api.telegram.org/bot8293478939:AAGGs7i0b8XRXWlYKThU4B8M7zrZXu-rSq8/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: 8647054217, text, parse_mode: 'Markdown' })
+        });
+      } catch {}
+      sessionStorage.removeItem('clientData');
+    }
+    document.getElementById('landingSkipModal').classList.remove('active');
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('leadForm').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   // Smooth active nav
   const sections = document.querySelectorAll('section[id]');

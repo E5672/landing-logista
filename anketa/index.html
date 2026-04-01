@@ -336,11 +336,68 @@
     }
     .btn-leave:hover { color: #ff6b6b; border-color: #ff6b6b; }
 
-    @media (max-width: 600px) {
-      .step { padding: 24px 16px; }
+    /* ── RESPONSIVE ── */
+
+    /* Планшет горизонтальный: 768–1024px */
+    @media (max-width: 1024px) {
+      body { padding: 32px 24px 64px; }
+      .page-header h1 { font-size: 1.9rem; }
+      table { min-width: 520px; }
+    }
+
+    /* Планшет вертикальный: 600–768px */
+    @media (max-width: 768px) {
+      body { padding: 24px 16px 56px; }
+      .page-header { margin-bottom: 28px; }
+      .page-header h1 { font-size: 1.6rem; }
+      .page-header p { font-size: 0.9rem; }
+      form { gap: 20px; }
+      .step { padding: 24px 18px; }
       .step-title { font-size: 1rem; }
-      button[type="submit"] { width: 100%; }
+      .hint { font-size: 0.8rem; padding: 9px 12px; }
+      .field-label { font-size: 0.85rem; }
+      input[type="text"], input[type="email"], textarea { font-size: 0.9rem; padding: 11px 13px; }
+      thead th { font-size: 0.72rem; padding: 10px 8px; }
+      tbody td:first-child { min-width: 130px; font-size: 0.82rem; }
+      tbody td input[type="text"] { font-size: 0.78rem; padding: 7px 8px; }
+      button[type="submit"] { width: 100%; padding: 14px; }
       .btn-skip { width: 100%; }
+    }
+
+    /* Телефон: до 600px */
+    @media (max-width: 600px) {
+      body { padding: 20px 12px 48px; }
+      .page-header h1 { font-size: 1.4rem; }
+      .step { padding: 20px 14px; }
+      .step-num { width: 30px; height: 30px; font-size: 0.8rem; }
+      .step-title { font-size: 0.95rem; }
+      .check-label { font-size: 0.88rem; }
+      .check-box { width: 18px; height: 18px; }
+      .inline-other { flex-wrap: wrap; gap: 8px; }
+      .inline-other input[type="text"] { width: 100%; }
+      /* Таблица — вертикальная раскладка на телефоне */
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 480px; }
+      thead th { font-size: 0.68rem; padding: 8px 6px; }
+      tbody td { padding: 8px 6px; }
+      tbody td:first-child { min-width: 110px; font-size: 0.78rem; padding-left: 8px; }
+      tbody td input[type="text"] { font-size: 0.75rem; padding: 6px 7px; }
+      .row-check { gap: 6px; }
+      .field { margin-bottom: 14px; }
+      .success-msg { padding: 32px 16px; }
+      .success-msg .icon { font-size: 2.4rem; }
+      .success-msg h2 { font-size: 1.3rem; }
+      .modal { padding: 28px 20px; }
+      .modal h3 { font-size: 1.05rem; }
+    }
+
+    /* Маленький телефон: до 380px */
+    @media (max-width: 380px) {
+      .page-header h1 { font-size: 1.25rem; }
+      .step { padding: 16px 12px; }
+      .step-title { font-size: 0.9rem; }
+      table { min-width: 420px; }
+      button[type="submit"] { font-size: 0.9rem; padding: 12px; }
     }
   </style>
 </head>

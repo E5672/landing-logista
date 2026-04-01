@@ -834,9 +834,10 @@
         </form>
       </div>
       <div class="success-msg" id="successMsg">
-        <div class="check">✅</div>
-        <h3>Заявка отправлена!</h3>
-        <p>Елена свяжется с вами в течение 24 часов. Ждите звонка или сообщения.</p>
+        <div class="check">📋</div>
+        <h3>Заявка принята!</h3>
+        <p style="margin-bottom:20px">Заполните анкету — и ваш заказ начнёт обрабатываться сразу, что ускорит решение вашей задачи. После этого наш специалист свяжется с вами.<br><br><em style="font-size:0.85rem;opacity:0.7">Пропустить этот шаг можно, но не рекомендуется.</em></p>
+        <a href="/anketa/" class="btn-primary" style="display:inline-block;text-decoration:none">Действуй! →</a>
       </div>
     </div>
   </div>
@@ -848,16 +849,10 @@
 </footer>
 
 <script>
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
     const form = document.getElementById('leadForm');
-    const btn = form.querySelector('.form-submit');
     const success = document.getElementById('successMsg');
-
-    const name    = document.getElementById('name').value.trim();
-    const phone   = document.getElementById('phone').value.trim();
-    const topic   = document.getElementById('topic').value;
-    const comment = document.getElementById('comment').value.trim();
 
     const topicMap = {
       'audit': 'Аудит логистики',
@@ -867,32 +862,19 @@
       'other': 'Другое'
     };
 
-    const text = `🚛 *Новая заявка с сайта!*\n\n` +
-      `👤 *Имя:* ${name}\n` +
-      `📞 *Контакт:* ${phone}\n` +
-      `📋 *Тема:* ${topicMap[topic] || 'Не указана'}\n` +
-      `💬 *Комментарий:* ${comment || 'Не указан'}`;
+    const topic = document.getElementById('topic').value;
+    const clientData = {
+      name:    document.getElementById('name').value.trim(),
+      phone:   document.getElementById('phone').value.trim(),
+      topic:   topicMap[topic] || 'Не указана',
+      comment: document.getElementById('comment').value.trim()
+    };
 
-    btn.disabled = true;
-    btn.textContent = 'Отправляем...';
+    // Сохраняем данные клиента — отправим в бот после анкеты
+    sessionStorage.setItem('clientData', JSON.stringify(clientData));
 
-    try {
-      await fetch(`https://api.telegram.org/bot8293478939:AAGGs7i0b8XRXWlYKThU4B8M7zrZXu-rSq8/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: 8647054217,
-          text: text,
-          parse_mode: 'Markdown'
-        })
-      });
-      form.style.display = 'none';
-      success.style.display = 'block';
-    } catch {
-      btn.disabled = false;
-      btn.textContent = 'Отправить заявку →';
-      alert('Ошибка отправки. Попробуйте ещё раз.');
-    }
+    form.style.display = 'none';
+    success.style.display = 'block';
   }
 
   // Smooth active nav

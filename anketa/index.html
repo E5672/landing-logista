@@ -267,10 +267,80 @@
     .success-msg h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
     .success-msg p { color: var(--muted); }
 
+    /* ── SKIP BUTTON ── */
+    .skip-wrap {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .btn-skip {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px 32px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-skip:hover { border-color: #ff6b6b; color: #ff6b6b; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .modal-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .modal h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 12px; }
+    .modal p { color: var(--muted); font-size: 0.92rem; line-height: 1.7; margin-bottom: 28px; }
+    .modal-btns { display: flex; flex-direction: column; gap: 12px; }
+    .btn-stay {
+      background: linear-gradient(135deg, var(--accent), #8b7fff);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+      transition: transform 0.2s;
+    }
+    .btn-stay:hover { transform: translateY(-2px); }
+    .btn-leave {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-leave:hover { color: #ff6b6b; border-color: #ff6b6b; }
+
     @media (max-width: 600px) {
       .step { padding: 24px 16px; }
       .step-title { font-size: 1rem; }
       button[type="submit"] { width: 100%; }
+      .btn-skip { width: 100%; }
     }
   </style>
 </head>
@@ -766,8 +836,24 @@
   <div class="submit-wrap">
     <button type="submit" id="submitBtn">Отправить анкету →</button>
   </div>
+  <div class="skip-wrap">
+    <button type="button" class="btn-skip" id="skipBtn">Пропустить анкету</button>
+  </div>
 
 </form>
+
+<!-- Модальное окно при попытке пропустить -->
+<div class="modal-overlay" id="skipModal">
+  <div class="modal">
+    <div class="modal-icon">⚡</div>
+    <h3>Хочешь ускорить процесс?</h3>
+    <p>Заполни анкету — и дело пойдёт в работу мгновенно.</p>
+    <div class="modal-btns">
+      <button class="btn-stay" id="btnStay">Заполнить анкету</button>
+      <button class="btn-leave" id="btnLeave">Уйти без анкеты</button>
+    </div>
+  </div>
+</div>
 
 <div class="success-msg" id="successMsg">
   <div class="icon">✅</div>
@@ -776,11 +862,54 @@
 </div>
 
 <script>
+  const BOT = '8293478939:AAGGs7i0b8XRXWlYKThU4B8M7zrZXu-rSq8';
+  const CHAT = 8647054217;
+
+  // Данные клиента из лендинга
+  const clientData = JSON.parse(sessionStorage.getItem('clientData') || '{}');
+
+  function clientBlock() {
+    if (!clientData.name && !clientData.phone) return '';
+    return [
+      '📥 *Заявка с сайта*',
+      `👤 Имя: ${clientData.name || '—'}`,
+      `📞 Контакт: ${clientData.phone || '—'}`,
+      `📋 Тема: ${clientData.topic || '—'}`,
+      `💬 Комментарий: ${clientData.comment || '—'}`,
+      '',
+    ].join('\n');
+  }
+
+  async function sendToBot(text) {
+    await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'Markdown' })
+    });
+  }
+
   // Вложенные чекбоксы уведомлений
   document.getElementById('notif-toggle').addEventListener('change', function() {
     document.getElementById('notif-nested').style.opacity = this.checked ? '1' : '0.4';
   });
 
+  // Кнопка "Пропустить"
+  document.getElementById('skipBtn').addEventListener('click', () => {
+    document.getElementById('skipModal').classList.add('active');
+  });
+  document.getElementById('btnStay').addEventListener('click', () => {
+    document.getElementById('skipModal').classList.remove('active');
+  });
+  document.getElementById('btnLeave').addEventListener('click', async () => {
+    // Отправляем только данные клиента без анкеты
+    const text = clientBlock() +
+      '⚠️ *Клиент ушёл без заполнения анкеты*';
+    try { await sendToBot(text); } catch {}
+    sessionStorage.removeItem('clientData');
+    window.location.href = '/';
+  });
+
+  // Отправка анкеты
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
@@ -788,13 +917,11 @@
     btn.textContent = 'Отправляем...';
 
     const fd = new FormData(e.target);
-
-    // Собираем данные
     const get = k => fd.get(k) || '';
     const getAll = k => fd.getAll(k).join(', ');
 
-    const lines = [
-      '📋 *Новая анкета логиста!*',
+    const text = clientBlock() + [
+      '📋 *Анкета логиста*',
       '',
       '*ШАГ 1. О тебе*',
       `👤 Имя: ${get('name')}`,
@@ -808,7 +935,7 @@
       `💻 Программы: ${getAll('software')}${get('software_other') ? ' / ' + get('software_other') : ''}`,
       '',
       '*ШАГ 3. Что занимает время*',
-      `Стоимость перевозки: ${get('cost_how')} | ${get('cost_time')} | ${get('cost_example')}`,
+      `Стоимость: ${get('cost_how')} | ${get('cost_time')} | ${get('cost_example')}`,
       `Маршрут: ${get('route_how')} | ${get('route_time')} | ${get('route_example')}`,
       `Где груз: ${get('track_how')} | ${get('track_time')} | ${get('track_example')}`,
       `Отчёты: ${get('reports_how')} | ${get('reports_time')} | ${get('reports_example')}`,
@@ -832,20 +959,11 @@
       '*ШАГ 7. Дополнительно*',
       `📎 Примеры есть: ${getAll('has_examples')}`,
       `💡 Идеи: ${get('ideas')}`,
-    ];
-
-    const text = lines.join('\n');
+    ].join('\n');
 
     try {
-      await fetch('https://api.telegram.org/bot8293478939:AAGGs7i0b8XRXWlYKThU4B8M7zrZXu-rSq8/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: 8647054217,
-          text: text,
-          parse_mode: 'Markdown'
-        })
-      });
+      await sendToBot(text);
+      sessionStorage.removeItem('clientData');
       document.getElementById('anketaForm').style.display = 'none';
       document.getElementById('successMsg').style.display = 'block';
     } catch {

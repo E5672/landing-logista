@@ -229,6 +229,121 @@
     }
     .row-check { display: flex; align-items: center; gap: 8px; }
 
+    /* ── MULTI-SELECT DROPDOWN ── */
+    .ms-wrap { position: relative; width: 100%; min-width: 120px; }
+    .ms-trigger {
+      width: 100%;
+      background: #1e2335;
+      border: 2px solid #4a5068;
+      border-radius: 8px;
+      padding: 7px 28px 7px 10px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .ms-trigger::after {
+      content: '▾';
+      position: absolute;
+      right: 9px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .ms-trigger.open { border-color: var(--accent); }
+    .ms-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 180px;
+      background: #1a1e2a;
+      border: 1px solid #4a5068;
+      border-radius: 10px;
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      padding: 6px 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .ms-dropdown.open { display: block; }
+    .ms-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 0.83rem;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .ms-option:hover { background: rgba(108,99,255,0.1); }
+    .ms-option input[type="checkbox"] { display: none; }
+    .ms-cb {
+      width: 16px; height: 16px;
+      border: 2px solid #4a5068;
+      border-radius: 4px;
+      background: #1e2335;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .ms-option input[type="checkbox"]:checked + .ms-cb {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .ms-option input[type="checkbox"]:checked + .ms-cb::after {
+      content: '✓';
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .ms-other-input {
+      display: none;
+      padding: 4px 14px 8px;
+    }
+    .ms-other-input input {
+      width: 100%;
+      background: #1e2335;
+      border: 1px solid #4a5068;
+      border-radius: 7px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .ms-other-input input:focus { border-color: var(--accent); }
+    /* одиночный select для времени */
+    .time-select {
+      width: 100%;
+      background: #1e2335;
+      border: 2px solid #4a5068;
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b90a0'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .time-select:focus { border-color: var(--accent); }
+    .time-select option { background: #1a1e2a; }
+
     /* ── SUBMIT ── */
     .submit-wrap { text-align: center; }
     button[type="submit"] {
@@ -623,8 +738,8 @@
                 Считаю стоимость перевозки
               </div>
             </td>
-            <td><input type="text" name="cost_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="cost_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="cost_how"></div></td>
+            <td><select class="time-select" name="cost_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="cost_example" placeholder="Пример"/></td>
           </tr>
           <tr>
@@ -637,8 +752,8 @@
                 Считаю, какой маршрут выбрать
               </div>
             </td>
-            <td><input type="text" name="route_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="route_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="route_how"></div></td>
+            <td><select class="time-select" name="route_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="route_example" placeholder="Пример"/></td>
           </tr>
           <tr>
@@ -651,8 +766,8 @@
                 Проверяю, где находится груз
               </div>
             </td>
-            <td><input type="text" name="track_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="track_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="track_how"></div></td>
+            <td><select class="time-select" name="track_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="track_example" placeholder="Пример"/></td>
           </tr>
           <tr>
@@ -665,8 +780,8 @@
                 Составляю отчёты
               </div>
             </td>
-            <td><input type="text" name="reports_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="reports_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="reports_how"></div></td>
+            <td><select class="time-select" name="reports_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="reports_example" placeholder="Пример"/></td>
           </tr>
           <tr>
@@ -679,8 +794,8 @@
                 Общаюсь с перевозчиками и клиентами
               </div>
             </td>
-            <td><input type="text" name="comm_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="comm_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="comm_how"></div></td>
+            <td><select class="time-select" name="comm_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="comm_example" placeholder="Пример"/></td>
           </tr>
           <tr>
@@ -693,8 +808,8 @@
                 <input type="text" name="process_other_text" placeholder="Другое (укажи своё)" style="width:130px;padding:6px 10px;font-size:0.82rem"/>
               </div>
             </td>
-            <td><input type="text" name="other_how" placeholder="Как выполняешь"/></td>
-            <td><input type="text" name="other_time" placeholder="Сколько времени"/></td>
+            <td><div class="ms-wrap" data-name="other_how"></div></td>
+            <td><select class="time-select" name="other_time"><option value="">— выбери —</option><option>30 минут</option><option>1 час</option><option>2 часа</option><option>больше 3 часов</option><option>полдня</option><option>весь день</option><option>круглосуточно</option><option>свой вариант</option></select></td>
             <td><input type="text" name="other_example" placeholder="Пример"/></td>
           </tr>
         </tbody>
@@ -919,6 +1034,104 @@
 </div>
 
 <script>
+  // ── MULTI-SELECT ──
+  const HOW_OPTIONS = ['Вручную','Excel','Google таблицы','CRM','ERP','Другое'];
+
+  function buildMultiSelect(wrap) {
+    const name = wrap.dataset.name;
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'ms-trigger';
+    trigger.textContent = '— выбери —';
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'ms-dropdown';
+
+    const selected = new Set();
+
+    HOW_OPTIONS.forEach(opt => {
+      const label = document.createElement('label');
+      label.className = 'ms-option';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      const box = document.createElement('span');
+      box.className = 'ms-cb';
+      const text = document.createElement('span');
+      text.textContent = opt;
+
+      label.appendChild(cb);
+      label.appendChild(box);
+      label.appendChild(text);
+
+      cb.addEventListener('change', () => {
+        if (cb.checked) selected.add(opt); else selected.delete(opt);
+        const other = dropdown.querySelector('.ms-other-input');
+        if (opt === 'Другое') other.style.display = cb.checked ? 'block' : 'none';
+        updateTrigger();
+        syncHidden();
+      });
+
+      dropdown.appendChild(label);
+
+      if (opt === 'Другое') {
+        const otherWrap = document.createElement('div');
+        otherWrap.className = 'ms-other-input';
+        const otherInput = document.createElement('input');
+        otherInput.type = 'text';
+        otherInput.placeholder = 'Укажи свой вариант';
+        otherInput.dataset.otherFor = name;
+        otherInput.addEventListener('input', syncHidden);
+        otherWrap.appendChild(otherInput);
+        dropdown.appendChild(otherWrap);
+      }
+    });
+
+    // скрытое поле для сбора значений
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = name;
+    wrap.appendChild(hidden);
+
+    function updateTrigger() {
+      const vals = [...selected];
+      trigger.textContent = vals.length ? vals.join(', ') : '— выбери —';
+      trigger.classList.toggle('open', dropdown.classList.contains('open'));
+    }
+
+    function syncHidden() {
+      const otherInput = dropdown.querySelector('[data-other-for]');
+      const vals = [...selected].map(v => v === 'Другое' && otherInput?.value ? otherInput.value : v);
+      hidden.value = vals.join(', ');
+    }
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+      // закрыть все остальные
+      document.querySelectorAll('.ms-dropdown.open').forEach(d => {
+        d.classList.remove('open');
+        d.previousElementSibling?.classList.remove('open');
+      });
+      if (!isOpen) {
+        dropdown.classList.add('open');
+        trigger.classList.add('open');
+      }
+    });
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(dropdown);
+  }
+
+  document.querySelectorAll('.ms-wrap').forEach(buildMultiSelect);
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.ms-dropdown.open').forEach(d => {
+      d.classList.remove('open');
+      d.previousElementSibling?.classList.remove('open');
+    });
+  });
+
   const BOT = '8293478939:AAGGs7i0b8XRXWlYKThU4B8M7zrZXu-rSq8';
   const CHAT = 8647054217;
 

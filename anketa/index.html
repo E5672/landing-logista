@@ -1141,20 +1141,25 @@
   function clientBlock() {
     if (!clientData.name && !clientData.phone) return '';
     return [
-      '📥 *Заявка с сайта*',
-      `👤 Имя: ${clientData.name || '—'}`,
-      `📞 Контакт: ${clientData.phone || '—'}`,
-      `📋 Тема: ${clientData.topic || '—'}`,
-      `💬 Комментарий: ${clientData.comment || '—'}`,
+      '📥 <b>Заявка с сайта</b>',
+      `👤 Имя: ${esc(clientData.name || '—')}`,
+      `📞 Контакт: ${esc(clientData.phone || '—')}`,
+      `📋 Тема: ${esc(clientData.topic || '—')}`,
+      `💬 Комментарий: ${esc(clientData.comment || '—')}`,
       '',
     ].join('\n');
+  }
+
+  // Экранируем символы которые ломают HTML в Telegram
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   async function sendToBot(text) {
     await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'Markdown' })
+      body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'HTML' })
     });
   }
 
@@ -1173,7 +1178,7 @@
   document.getElementById('btnLeave').addEventListener('click', async () => {
     // Отправляем только данные клиента без анкеты
     const text = clientBlock() +
-      '⚠️ *Клиент ушёл без заполнения анкеты*';
+      '⚠️ <b>Клиент ушёл без заполнения анкеты</b>';
     try { await sendToBot(text); } catch {}
     sessionStorage.removeItem('clientData');
     window.location.href = '/';
@@ -1190,45 +1195,48 @@
     const get = k => fd.get(k) || '';
     const getAll = k => fd.getAll(k).join(', ');
 
+    const e = (k) => esc(get(k));
+    const ea = (k) => esc(getAll(k));
+
     const text = clientBlock() + [
-      '📋 *Анкета логиста*',
+      '📋 <b>Анкета логиста</b>',
       '',
-      '*ШАГ 1. О тебе*',
-      `👤 Имя: ${get('name')}`,
-      `💼 Должность: ${get('position')}`,
-      `🚛 Сфера: ${getAll('sphere')}${get('sphere_other') ? ' / ' + get('sphere_other') : ''}`,
-      `📅 Лет в логистике: ${getAll('years')}`,
+      '<b>ШАГ 1. О тебе</b>',
+      `👤 Имя: ${e('name')}`,
+      `💼 Должность: ${e('position')}`,
+      `🚛 Сфера: ${ea('sphere')}${get('sphere_other') ? ' / ' + esc(get('sphere_other')) : ''}`,
+      `📅 Лет в логистике: ${ea('years')}`,
       '',
-      '*ШАГ 2. Инструменты*',
-      `🖥 Устройства: ${getAll('device')}`,
-      `📊 Таблицы: ${getAll('tables')}${get('tables_other') ? ' / ' + get('tables_other') : ''}`,
-      `💻 Программы: ${getAll('software')}${get('software_other') ? ' / ' + get('software_other') : ''}`,
+      '<b>ШАГ 2. Инструменты</b>',
+      `🖥 Устройства: ${ea('device')}`,
+      `📊 Таблицы: ${ea('tables')}${get('tables_other') ? ' / ' + esc(get('tables_other')) : ''}`,
+      `💻 Программы: ${ea('software')}${get('software_other') ? ' / ' + esc(get('software_other')) : ''}`,
       '',
-      '*ШАГ 3. Что занимает время*',
-      `Стоимость: ${get('cost_how')} | ${get('cost_time')} | ${get('cost_example')}`,
-      `Маршрут: ${get('route_how')} | ${get('route_time')} | ${get('route_example')}`,
-      `Где груз: ${get('track_how')} | ${get('track_time')} | ${get('track_example')}`,
-      `Отчёты: ${get('reports_how')} | ${get('reports_time')} | ${get('reports_example')}`,
-      `Общение: ${get('comm_how')} | ${get('comm_time')} | ${get('comm_example')}`,
-      `Другое: ${get('process_other_text')} — ${get('other_how')} | ${get('other_time')} | ${get('other_example')}`,
+      '<b>ШАГ 3. Что занимает время</b>',
+      `Стоимость: ${e('cost_how')} | ${e('cost_time')} | ${e('cost_example')}`,
+      `Маршрут: ${e('route_how')} | ${e('route_time')} | ${e('route_example')}`,
+      `Где груз: ${e('track_how')} | ${e('track_time')} | ${e('track_example')}`,
+      `Отчёты: ${e('reports_how')} | ${e('reports_time')} | ${e('reports_example')}`,
+      `Общение: ${e('comm_how')} | ${e('comm_time')} | ${e('comm_example')}`,
+      `Другое: ${e('process_other_text')} — ${e('other_how')} | ${e('other_time')} | ${e('other_example')}`,
       '',
-      '*ШАГ 4. Упростить / автоматизировать*',
-      `✅ ${getAll('simplify')}${get('simplify_other') ? ' / ' + get('simplify_other') : ''}`,
-      `🔔 Уведомления: ${getAll('notif_target')}${get('notif_other') ? ' / ' + get('notif_other') : ''}`,
+      '<b>ШАГ 4. Упростить / автоматизировать</b>',
+      `✅ ${ea('simplify')}${get('simplify_other') ? ' / ' + esc(get('simplify_other')) : ''}`,
+      `🔔 Уведомления: ${ea('notif_target')}${get('notif_other') ? ' / ' + esc(get('notif_other')) : ''}`,
       '',
-      '*ШАГ 5. Масштаб*',
-      `🚗 Машин: ${getAll('cars')}${get('cars_other') ? ' / ' + get('cars_other') : ''}`,
-      `🛣 Рейсов в день: ${getAll('trips')}${get('trips_other') ? ' / ' + get('trips_other') : ''}`,
-      `👥 Клиентов: ${getAll('clients')}${get('clients_other') ? ' / ' + get('clients_other') : ''}`,
-      `📦 Источники: ${getAll('sources')}${get('sources_other') ? ' / ' + get('sources_other') : ''}`,
-      `💬 Комментарий: ${get('step5_comment')}`,
+      '<b>ШАГ 5. Масштаб</b>',
+      `🚗 Машин: ${ea('cars')}${get('cars_other') ? ' / ' + esc(get('cars_other')) : ''}`,
+      `🛣 Рейсов в день: ${ea('trips')}${get('trips_other') ? ' / ' + esc(get('trips_other')) : ''}`,
+      `👥 Клиентов: ${ea('clients')}${get('clients_other') ? ' / ' + esc(get('clients_other')) : ''}`,
+      `📦 Источники: ${ea('sources')}${get('sources_other') ? ' / ' + esc(get('sources_other')) : ''}`,
+      `💬 Комментарий: ${e('step5_comment')}`,
       '',
-      '*ШАГ 6. Приоритеты*',
-      `⭐ ${getAll('priority')}${get('priority_other') ? ' / ' + get('priority_other') : ''}`,
+      '<b>ШАГ 6. Приоритеты</b>',
+      `⭐ ${ea('priority')}${get('priority_other') ? ' / ' + esc(get('priority_other')) : ''}`,
       '',
-      '*ШАГ 7. Дополнительно*',
-      `📎 Примеры есть: ${getAll('has_examples')}`,
-      `💡 Идеи: ${get('ideas')}`,
+      '<b>ШАГ 7. Дополнительно</b>',
+      `📎 Примеры есть: ${ea('has_examples')}`,
+      `💡 Идеи: ${e('ideas')}`,
     ].join('\n');
 
     try {
